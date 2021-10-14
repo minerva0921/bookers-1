@@ -8,20 +8,20 @@ class BooksController < ApplicationController
     @book = Book.new
     @book = Book.all
   end
-    
+  
+  def show
+    @book = Book.find(params[:id])
+  end
+  
   def create
     @book = Book.new(book_params)
     if @book.save
       flash[:notice] = "successfully create"
-      redirect_to books_path
+      redirect_to book_path(@book.id)
     else
-      flash.now[:alert] = "create error"
+      flash.now[:error] = @book.errors.full_messages
       render :index
     end
-  end
-  
-  def show
-    @book = Book.find(params[:id])
   end
   
   def edit
@@ -32,9 +32,9 @@ class BooksController < ApplicationController
     book = Book.find(params[:id])
     if book.update(book_params)
       flash[:notice] = "successfully update"
-      redirect_to books_path
+      redirect_to book_path(book.id)
     else
-      flash.now[:alert] = "update error"
+      flash.now[:error] = book.errors.full_messages
       render :index
     end
   end
@@ -48,7 +48,7 @@ class BooksController < ApplicationController
   private
   # ストロングパラメータ
   def book_params
-    params.require(:book).permit(:Title, :Body)
+    params.require(:book).permit(:title, :body)
   end
 
 end
